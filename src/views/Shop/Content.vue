@@ -26,8 +26,8 @@
             @click="() => { changeCartItemInfo(shopId, item._id, item, -1) }"
             class="product_number_minus"
           >-</span>
-          {{item.count || 0}}
-          <!-- {{ cartList?.[shopId]?.[item._id]?.count || 0 }} -->
+          <!-- {{item.count || 0}} -->
+          {{ cartList?.[shopId]?.[item._id]?.count || 0 }}
           <span
             @click="() => { changeCartItemInfo(shopId, item._id, item, 1) }"
             class="product_number_plus"
@@ -94,8 +94,8 @@ export default {
 
     const { list } = useCurrentListEffect(currentTab, shopId)
 
-    const { changeCartItemInfo } = CommonUseCartEffect()
-    return { list, categories, currentTab, changeCartItemInfo, shopId, handleCateClick }
+    const { changeCartItemInfo, cartList } = CommonUseCartEffect()
+    return { list, categories, currentTab, changeCartItemInfo, shopId, cartList, handleCateClick }
   }
 }
 </script>

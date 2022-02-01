@@ -2,9 +2,14 @@
   <div class="cart">
     <div class="product">
       <!-- template 占位符 -->
+      <div class="product_header">
+        <div class="product_header_all">
+          <span class="product_header_icon iconfont">&#xe652;</span>
+          全选
+        </div>
+        <div @click="cleanCartProducts(shopId)" class="product_header_clear">清空购物车</div>
+      </div>
       <template v-for="(item, index) in productList" :key="index">
-        <div class="product_header"></div>
-
         <div v-if="item.count > 0" class="product_item">
           <!-- 选中 -->
           <div
@@ -72,6 +77,11 @@ const useCartEffect = (shopId) => {
     })
   }
 
+  // 清空购物车
+  const cleanCartProducts = (shopId) => {
+    store.commit('cleanCartProducts', { shopId })
+  }
+
   // 计算 总数量
   const total = computed(() => {
     const productList = cartList[shopId]
@@ -105,7 +115,7 @@ const useCartEffect = (shopId) => {
     return productList
   })
 
-  return { total, price, productList, cartList, changeCartItemInfo, changeCartItemCheck }
+  return { total, price, productList, cartList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts }
 }
 
 export default {
@@ -115,9 +125,9 @@ export default {
     const shopId = route.params.id // 获取路由传过来的shopId
 
     // 从useCartEffect() 里获取总数量、总价格、商品列表、添加/删除商品的方法
-    const { total, price, productList, changeCartItemInfo, changeCartItemCheck } = useCartEffect(shopId)
+    const { total, price, productList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts } = useCartEffect(shopId)
 
-    return { total, price, productList, shopId, changeCartItemInfo, changeCartItemCheck }
+    return { total, price, productList, shopId, changeCartItemInfo, changeCartItemCheck, cleanCartProducts }
   }
 }
 </script>
@@ -185,8 +195,24 @@ export default {
   overflow-y: scroll;
   background-color: #fff;
   &_header {
-    height: 0.52rem;
+    line-height: 0.52rem;
+    display: flex;
     border-bottom: 0.01rem solid #f1f1f1;
+    &_clear {
+      flex: 1;
+      text-align: right;
+      font-size: 0.14rem;
+      color: #333;
+      margin-right: 0.16rem;
+    }
+    &_all {
+      width: 0.64rem;
+      margin-left: .18rem;
+    }
+    &_icon{
+      color: #0091ff;
+      font-size: .2rem;
+    }
   }
   &_item {
     display: flex;

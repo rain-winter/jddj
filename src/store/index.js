@@ -46,11 +46,15 @@ export default createStore({
       state.cartList[shopId] = shopInfo
       console.log(shopId, productId, productInfo)
     },
-
+    // 选中方法
     changeCartItemCheck (state, payload) {
       const { shopId, productId } = payload
       const product = state.cartList[shopId][productId]
       product.check = !product.check
+    },
+    cleanCartProducts (state, payload) {
+      const { shopId } = payload
+      state.cartList[shopId] = {}
     }
   },
   actions: {},
