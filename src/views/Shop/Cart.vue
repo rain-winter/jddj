@@ -1,13 +1,23 @@
 <template>
+  <div class="mask" v-if="showCart"></div>
   <div class="cart">
-    <div class="product">
+    <div class="product" v-if="showCart">
       <!-- template 占位符 -->
       <div class="product_header">
-        <div class="product_header_all">
-          <span class="product_header_icon iconfont">&#xe652;</span>
+        <!-- 全选按钮 -->
+        <div class="product_header_all"
+        @click="selectCartItemChecked(shopId)"
+        >
+          <span
+          class="product_header_icon iconfont"
+          v-html="allChecked ? '&#xe652;' : '&#xe667;' "
+          >
+          </span>
           全选
         </div>
-        <div @click="cleanCartProducts(shopId)" class="product_header_clear">清空购物车</div>
+        <div class="product_header_clear">
+          <span @click="cleanCartProducts(shopId)">清空购物车</span>
+        </div>
       </div>
       <template v-for="(item, index) in productList" :key="index">
         <div v-if="item.count > 0" class="product_item">
@@ -44,21 +54,25 @@
     </div>
     <div class="check">
       <div class="check_icon">
-        <img src="http://www.dell-lee.com/imgs/vue3/basket.png" class="check_icon_img" />
+        <img @click="showCart=!showCart" src="http://www.dell-lee.com/imgs/vue3/basket.png" class="check_icon_img" />
         <div class="check_icon_tag">{{ total }}</div>
       </div>
       <div class="check_info">
         总计:
         <span class="check_info_price">&yen;{{ price }}</span>
       </div>
-      <div class="check_btn">去结算</div>
+      <div class="check_btn">
+        <router-link :to="{name:'Home'}">
+          去结算
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 import { CommonUseCartEffect } from './commonCartEffect'
 
@@ -76,11 +90,29 @@ const useCartEffect = (shopId) => {
       productId
     })
   }
+  // 全选的选中
+  const selectCartItemChecked = (shopId) => {
+    store.commit('selectCartItemChecked', { shopId })
+  }
 
   // 清空购物车
   const cleanCartProducts = (shopId) => {
     store.commit('cleanCartProducts', { shopId })
   }
+  // 全选按钮
+  const allChecked = computed(() => {
+    const productList = cartList[shopId]
+    let result = true
+    if (productList) {
+      for (const i in productList) {
+        const product = productList[i]
+        if (product.count > 0 && !product.check) {
+          result = false
+        }
+      }
+    }
+    return result
+  })
 
   // 计算 总数量
   const total = computed(() => {
@@ -110,12 +142,18 @@ const useCartEffect = (shopId) => {
     return count.toFixed(2)
   })
 
+  // 当前购物车
   const productList = computed(() => {
     const productList = cartList[shopId] || []
     return productList
   })
 
-  return { total, price, productList, cartList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts }
+  return { total, price, productList, cartList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, allChecked, selectCartItemChecked }
+}
+
+const toggleCartEffect = () => {
+  const showCart = ref(false)
+  return { showCart }
 }
 
 export default {
@@ -124,16 +162,27 @@ export default {
     const route = useRoute()
     const shopId = route.params.id // 获取路由传过来的shopId
 
-    // 从useCartEffect() 里获取总数量、总价格、商品列表、添加/删除商品的方法
-    const { total, price, productList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts } = useCartEffect(shopId)
+    const { showCart } = toggleCartEffect()
 
-    return { total, price, productList, shopId, changeCartItemInfo, changeCartItemCheck, cleanCartProducts }
+    // 从useCartEffect() 里获取总数量、总价格、商品列表、添加/删除商品的方法
+    const { total, price, productList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, allChecked, selectCartItemChecked } = useCartEffect(shopId)
+
+    return { showCart, total, price, productList, shopId, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, allChecked, selectCartItemChecked }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
+.mask{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background-color: rgba(0,0,0,.5);
+  z-index: 1;
+}
 .cart {
   position: absolute;
   left: 0;
@@ -141,6 +190,7 @@ export default {
   bottom: 0;
   background-color: $bgColor;
   border: 0.01rem solid $dark-bgColor;
+  z-index: 2;
 }
 .check {
   display: flex;
@@ -184,10 +234,13 @@ export default {
   &_btn {
     width: 0.98rem;
     background-color: $btn-bgColor;
-    color: $bgColor;
+    color: $bgColor !important;
     font-size: 0.14rem;
     text-align: center;
     line-height: 0.5rem;
+    a {
+      color: $bgColor;
+    }
   }
 }
 .product {
@@ -204,14 +257,18 @@ export default {
       font-size: 0.14rem;
       color: #333;
       margin-right: 0.16rem;
+      &span{
+        line-height: .52rem;
+      }
     }
     &_all {
       width: 0.64rem;
-      margin-left: .18rem;
+      margin-left: 0.18rem;
     }
-    &_icon{
+    &_icon {
       color: #0091ff;
-      font-size: .2rem;
+      font-size: 0.2rem;
+      margin-right: 0.01rem;
     }
   }
   &_item {

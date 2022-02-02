@@ -26,22 +26,19 @@ export default createStore({
         productInfo
       } = payload
 
-      let shopInfo = state.cartList[shopId] // 获取店铺
-      if (!shopInfo) {
-        shopInfo = {}
-      }
+      const shopInfo = state.cartList[shopId] || {} // 获取店铺
+
       let product = shopInfo[productId] // 获取商品
-      if (!product) {
-        product = productInfo // 商品不存在，就把传递来的商品赋值给它
-        product.count = 0
+      if (!product) { // 商品不存在
+        productInfo.count = 0
+        product = productInfo // 传递过来的商品赋值给当前的product
       }
-      product.count = product.count + payload.num
-      if (payload.num > 0) {
-        product.check = true // 选中状态
-      }
-      if (product.count < 0) {
-        product.count = 0
-      }
+      // 商品存在就执行
+      product.count = product.count + payload.num;
+      // 传递过来的数量>0，就执行
+      (payload.num > 0) && (product.check = true);
+      (product.count < 0) && (product.count = 0)
+
       shopInfo[productId] = product // 重新给商品赋值
       state.cartList[shopId] = shopInfo
       console.log(shopId, productId, productInfo)
@@ -52,9 +49,20 @@ export default createStore({
       const product = state.cartList[shopId][productId]
       product.check = !product.check
     },
+    // 清空购物车
     cleanCartProducts (state, payload) {
       const { shopId } = payload
       state.cartList[shopId] = {}
+    },
+    selectCartItemChecked (state, payload) {
+      const { shopId } = payload
+      const products = state.cartList[shopId]
+      if (products) {
+        for (const i in products) {
+          const product = products[i]
+          product.check = true
+        }
+      }
     }
   },
   actions: {},
