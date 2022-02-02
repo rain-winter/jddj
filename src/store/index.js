@@ -2,6 +2,7 @@ import {
   createStore
 } from 'vuex'
 
+const setLocal
 export default createStore({
   state: {
     cartList: {
@@ -58,8 +59,7 @@ export default createStore({
       const products = state.cartList[shopId].productList
       if (products) {
         for (const i in products) {
-          const product = products[i]
-          product.check = true
+          products[i].check = true
         }
       }
     },

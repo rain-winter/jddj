@@ -23,13 +23,13 @@
         </div>
         <div class="product_number">
           <span
-            @click="() => { changeCartItemInfo(shopId, item._id, item, -1, shopName) }"
+            @click="() => { changeCartItem(shopId, item._id, item, -1, shopName) }"
             class="product_number_minus"
           >-</span>
           <!-- {{item.count || 0}} -->
-          {{ cartList?.[shopId]?.productList?.[item._id]?.count || 0 }}
+          {{ (getProductCartCount(shopId, item._id)) }}
           <span
-            @click="() => { changeCartItemInfo(shopId, item._id, item, 1, shopName) }"
+            @click="() => { changeCartItem(shopId, item._id, item, 1, shopName) }"
             class="product_number_plus"
           >+</span>
         </div>
@@ -86,28 +86,36 @@ const useCurrentListEffect = (currentTab, shopId) => {
   return { list }
 }
 
+const useCartEffect = () => {
+  const store = useStore()
+  const { changeCartItemInfo, cartList } = CommonUseCartEffect()
+
+  const changeShopName = (shopId, shopName) => {
+    store.commit('changeShopName', { shopId, shopName })
+  }
+
+  const changeCartItem = (shopId, productId, item, num, shopName) => {
+    changeCartItemInfo(shopId, productId, item, num)
+    changeShopName(shopId, shopName)
+  }
+
+  const getProductCartCount = (shopId, productId) => {
+    return cartList?.[shopId]?.productList?.[productId]?.count || 0
+  }
+  return { cartList, changeCartItem, getProductCartCount }
+}
+
 export default {
   name: 'Content',
   props: ['shopName'],
   setup () {
     const route = useRoute()
-    const store = useStore()
     const shopId = route.params.id
     const { currentTab, handleCateClick } = useTabEffect()
-
-    const changeShopName = (shopId, shopName) => {
-      store.commit('changeShopName', { shopId, shopName })
-    }
-
-    const changeCartItem = (shopId, productId, item, num, shopName) => {
-      changeCartItemInfo(shopId, productId, item, num)
-      changeShopName(shopId, shopName)
-    }
-
     const { list } = useCurrentListEffect(currentTab, shopId)
 
-    const { changeCartItemInfo, cartList } = CommonUseCartEffect()
-    return { list, categories, currentTab, changeCartItemInfo, changeCartItem, shopId, cartList, handleCateClick }
+    const { cartList, changeCartItem, getProductCartCount } = useCartEffect()
+    return { list, categories, currentTab, changeCartItem, getProductCartCount, shopId, cartList, handleCateClick }
   }
 }
 </script>

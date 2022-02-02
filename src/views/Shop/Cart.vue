@@ -1,18 +1,15 @@
 <template>
-  <div class="mask" v-if="showCart"></div>
+  <div class="mask" v-if="showCart && calculations.total > 0"></div>
   <div class="cart">
     <div class="product" v-if="showCart">
       <!-- template 占位符 -->
       <div class="product_header">
         <!-- 全选按钮 -->
-        <div class="product_header_all"
-        @click="selectCartItemChecked(shopId)"
-        >
+        <div class="product_header_all" @click="selectCartItemChecked(shopId)">
           <span
-          class="product_header_icon iconfont"
-          v-html="allChecked ? '&#xe652;' : '&#xe667;' "
-          >
-          </span>
+            class="product_header_icon iconfont"
+            v-html="calculations.allChecked ? '&#xe652;' : '&#xe667;' "
+          ></span>
           全选
         </div>
         <div class="product_header_clear">
@@ -54,17 +51,19 @@
     </div>
     <div class="check">
       <div class="check_icon">
-        <img @click="showCart=!showCart" src="http://www.dell-lee.com/imgs/vue3/basket.png" class="check_icon_img" />
-        <div class="check_icon_tag">{{ total }}</div>
+        <img
+          @click="showCart = !showCart"
+          src="http://www.dell-lee.com/imgs/vue3/basket.png"
+          class="check_icon_img"
+        />
+        <div class="check_icon_tag">{{ calculations.total }}</div>
       </div>
       <div class="check_info">
         总计:
-        <span class="check_info_price">&yen;{{ price }}</span>
+        <span class="check_info_price">&yen;{{ calculations.price }}</span>
       </div>
       <div class="check_btn">
-        <router-link :to="{name:'Home'}">
-          去结算
-        </router-link>
+        <router-link :to="{ name: 'Home' }">去结算</router-link>
       </div>
     </div>
   </div>
@@ -76,12 +75,35 @@ import { computed, ref } from 'vue'
 
 import { CommonUseCartEffect } from './commonCartEffect'
 
+// 获取购物车信息逻辑
 const useCartEffect = (shopId) => {
-  const { changeCartItemInfo } = CommonUseCartEffect() // 添加减少的方法
+  const { cartList, changeCartItemInfo } = CommonUseCartEffect() // 添加减少的方法
 
   const store = useStore()
   // 获取 store 里的购物车列表
-  const cartList = store.state.cartList
+
+  const calculations = computed(() => {
+    const productList = cartList[shopId]?.productList
+    const result = {
+      total: 0,
+      price: 0,
+      allChecked: true
+    }
+    if (productList) {
+      for (const i in productList) {
+        const product = productList[i]
+        result.total += product.count
+        if (product.check) {
+          result.price += (product.count * product.price)
+        }
+        if (product.count > 0 && !product.check) {
+          result.allChecked = false
+        }
+      }
+      result.price = result.price.toFixed(2)
+    }
+    return result
+  })
 
   // 选中
   const changeCartItemCheck = (shopId, productId) => {
@@ -99,48 +121,6 @@ const useCartEffect = (shopId) => {
   const cleanCartProducts = (shopId) => {
     store.commit('cleanCartProducts', { shopId })
   }
-  // 全选按钮
-  const allChecked = computed(() => {
-    const productList = cartList[shopId]?.productList
-    let result = true
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i]
-        if (product.count > 0 && !product.check) {
-          result = false
-        }
-      }
-    }
-    return result
-  })
-
-  // 计算 总数量
-  const total = computed(() => {
-    const productList = cartList[shopId]?.productList
-    let count = 0
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i]
-        count += product.count
-      }
-    }
-    return count
-  })
-
-  // 计算 总价格
-  const price = computed(() => {
-    const productList = cartList[shopId]?.productList
-    let count = 0
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i]
-        if (product.check) {
-          count += product.count * product.price
-        }
-      }
-    }
-    return count.toFixed(2)
-  })
 
   // 当前购物车
   const productList = computed(() => {
@@ -148,7 +128,7 @@ const useCartEffect = (shopId) => {
     return productList
   })
 
-  return { total, price, productList, cartList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, allChecked, selectCartItemChecked }
+  return { productList, cartList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, selectCartItemChecked, calculations }
 }
 
 const toggleCartEffect = () => {
@@ -162,25 +142,25 @@ export default {
     const route = useRoute()
     const shopId = route.params.id // 获取路由传过来的shopId
 
-    const { showCart } = toggleCartEffect()
+    const { showCart } = toggleCartEffect() // 展示购物车
 
     // 从useCartEffect() 里获取总数量、总价格、商品列表、添加/删除商品的方法
-    const { total, price, productList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, allChecked, selectCartItemChecked } = useCartEffect(shopId)
+    const { productList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, calculations, selectCartItemChecked } = useCartEffect(shopId)
 
-    return { showCart, total, price, productList, shopId, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, allChecked, selectCartItemChecked }
+    return { showCart, productList, shopId, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, calculations, selectCartItemChecked }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
-.mask{
+.mask {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   top: 0;
-  background-color: rgba(0,0,0,.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1;
 }
 .cart {
@@ -257,8 +237,8 @@ export default {
       font-size: 0.14rem;
       color: #333;
       margin-right: 0.16rem;
-      &span{
-        line-height: .52rem;
+      &span {
+        line-height: 0.52rem;
       }
     }
     &_all {
