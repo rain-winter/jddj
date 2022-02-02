@@ -2,7 +2,12 @@ import {
   createStore
 } from 'vuex'
 
-const setLocal
+// const setLocalStorage = (cartList) => {
+//   const { cartList } = state
+//   const cartListString = cartList.toJSON()
+//   localStorage.cartList = cartListString
+// }
+
 export default createStore({
   state: {
     cartList: {
