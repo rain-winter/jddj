@@ -101,7 +101,7 @@ const useCartEffect = (shopId) => {
   }
   // 全选按钮
   const allChecked = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let result = true
     if (productList) {
       for (const i in productList) {
@@ -116,7 +116,7 @@ const useCartEffect = (shopId) => {
 
   // 计算 总数量
   const total = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -129,7 +129,7 @@ const useCartEffect = (shopId) => {
 
   // 计算 总价格
   const price = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -144,7 +144,7 @@ const useCartEffect = (shopId) => {
 
   // 当前购物车
   const productList = computed(() => {
-    const productList = cartList[shopId] || []
+    const productList = cartList[shopId]?.productList || []
     return productList
   })
 

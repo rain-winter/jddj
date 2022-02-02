@@ -10,7 +10,7 @@
     <!-- 商品详情 -->
     <ShopInfo :item="item" v-if="item.imgUrl" />
     <!-- 商品列表 -->
-    <Content />
+    <Content :shopName="item.name" />
     <!-- 购物车 -->
     <Cart />
   </div>
