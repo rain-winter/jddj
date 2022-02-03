@@ -2,25 +2,30 @@ import {
   createStore
 } from 'vuex'
 
-// const setLocalStorage = (cartList) => {
-//   const { cartList } = state
-//   const cartListString = cartList.toJSON()
-//   localStorage.cartList = cartListString
-// }
+const setLocalStorage = (state) => {
+  const { cartList } = state
+  const cartListString = JSON.stringify(cartList)
+  localStorage.cartList = cartListString
+}
+
+const getLocalStorageCartList = () => {
+  return JSON.parse(localStorage.cartList) || {}
+}
 
 export default createStore({
   state: {
-    cartList: {
-      // 第一级 店铺的id
-      // shopId: {
-      //   shopName: '沃尔玛',
-      //   productList: {
-      //     productId: {
-      //       title: '番茄250元/份'
-      //     }
-      //   }
-      // }
-    }
+    cartList: getLocalStorageCartList()
+    // cartList: {
+    // 第一级 店铺的id
+    // shopId: {
+    //   shopName: '沃尔玛',
+    //   productList: {
+    //     productId: {
+    //       title: '番茄250元/份'
+    //     }
+    //   }
+    // }
+    // }
   },
   mutations: {
     changeCartItemInfo (state, payload) {
@@ -45,6 +50,7 @@ export default createStore({
 
       shopInfo.productList[productId] = product // 重新给商品赋值
       state.cartList[shopId] = shopInfo
+      setLocalStorage(state)
       console.log(shopId, productId, productInfo)
     },
     // 选中方法
@@ -52,11 +58,13 @@ export default createStore({
       const { shopId, productId } = payload
       const product = state.cartList[shopId].productList[productId]
       product.check = !product.check
+      setLocalStorage(state)
     },
     // 清空购物车
     cleanCartProducts (state, payload) {
       const { shopId } = payload
       state.cartList[shopId].productList = {}
+      setLocalStorage(state)
     },
     // 处理全部的选中
     selectCartItemChecked (state, payload) {
@@ -67,6 +75,7 @@ export default createStore({
           products[i].check = true
         }
       }
+      setLocalStorage(state)
     },
     changeShopName (state, payload) {
       const { shopId, shopName } = payload
@@ -74,6 +83,8 @@ export default createStore({
 
       shopInfo.shopName = shopName
       state.cartList[shopId] = shopInfo
+
+      setLocalStorage(state)
     }
   },
   actions: {},
