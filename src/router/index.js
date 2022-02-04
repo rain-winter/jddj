@@ -34,6 +34,16 @@ const routes = [
     path: '/shop/:id', // http://localhost:8080/#/shop/2
     name: 'Shop',
     component: () => import('../views/Shop/Shop.vue')
+  },
+  {
+    path: '/cartList',
+    name: 'CartList',
+    component: () => import('../views/CartList/CartList.vue')
+  },
+  {
+    path: '/order/:id',
+    name: 'Order',
+    component: () => import('../views/Order/Order.vue')
   }
 ]
 

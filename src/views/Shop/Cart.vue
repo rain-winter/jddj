@@ -63,7 +63,7 @@
         <span class="check_info_price">&yen;{{ calculations.price }}</span>
       </div>
       <div class="check_btn">
-        <router-link :to="{ name: 'Home' }">去结算</router-link>
+        <router-link :to="{ path: `/order/${shopId}` }">去结算</router-link>
       </div>
     </div>
   </div>
