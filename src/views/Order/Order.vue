@@ -16,7 +16,8 @@
         </div>
         <div class="products">
             <div class="products_title"></div>
-            <div class="products_list"></div>
+            <div class="products_list">
+            </div>
         </div>
     </div>
 </template>
