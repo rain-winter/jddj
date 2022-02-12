@@ -9,7 +9,11 @@ const setLocalStorage = (state) => {
 }
 
 const getLocalStorageCartList = () => {
-  return JSON.parse(localStorage.cartList) || {}
+  try {
+    return JSON.parse(localStorage.cartList)
+  } catch (e) {
+    return {}
+  }
 }
 
 export default createStore({
@@ -76,6 +80,10 @@ export default createStore({
         }
       }
       setLocalStorage(state)
+    },
+    // 清空购物车
+    clearCartData (state, shopId) {
+      state.cartList[shopId].productList = {}
     },
     changeShopName (state, payload) {
       const { shopId, shopName } = payload

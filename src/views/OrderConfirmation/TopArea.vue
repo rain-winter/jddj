@@ -1,41 +1,23 @@
 <template>
-    <div class="wrapper">
-        <div class="top">
-            <div class="top_header">
-                <div class="iconfont top_header_back">&#xe6f2;</div>确认订单
-            </div>
-            <div class="top_receiver">
-                <div class="top_receiver_title">收获地址</div>
-                <div class="top_receiver_address">北京理工大学国防科技园2号楼10层</div>
-                <div class="top_receiver_info">
-                    <span class="top_receiver_info_name">瑶妹（先生）</span>
-                    <span class="top_receiver_info_phone">18911024266</span>
-                </div>
-                <div class="iconfont top_receiver_enter">&#xe6f2;</div>
-            </div>
+    <div class="top">
+        <div class="top_header">
+            <div @click="()=>$router.back()" class="iconfont top_header_back">&#xe6f2;</div>
+            确认订单
         </div>
-        <div class="products">
-            <div class="products_title"></div>
-            <div class="products_list">
+        <div class="top_receiver">
+            <div class="top_receiver_title">收货地址</div>
+            <div class="top_receiver_address">北京理工大学国防科技园2号楼10层</div>
+            <div class="top_receiver_info">
+                <span class="top_receiver_info_name">瑶妹（先生）</span>
+                <span class="top_receiver_info_phone">18911024266</span>
             </div>
+            <div class="iconfont top_receiver_enter">&#xe6f2;</div>
         </div>
     </div>
 </template>
-<script>
-export default {
-}
+<script setup>
 </script>
-<style lang="scss" scoped>
-@import "../../style/viriables.scss";
-.wrapper {
-    overflow-y: auto;
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0.5rem;
-    right: 0;
-    background: $dark-bgColor;
-}
+<style scoped lang="scss">
 .top {
     height: 1.96rem;
     position: relative;
