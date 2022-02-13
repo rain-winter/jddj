@@ -22,11 +22,12 @@
             </div>
         </div>
     </div>
+    <DockerVue :currentIndex="2" />
 </template>
 <script>
 import { reactive, toRefs } from 'vue'
 import { $get } from '../../utils/request'
-
+import DockerVue from '../../components/Docker.vue'
 // 调用订单接口
 const useOrderListEffect = () => {
   // 定义数据
@@ -58,6 +59,7 @@ const useOrderListEffect = () => {
 
 export default {
   name: 'OrderList',
+  components: { DockerVue },
   setup () {
     const { list } = useOrderListEffect()
     return { list }
