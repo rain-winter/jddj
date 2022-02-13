@@ -54,7 +54,7 @@ const useMakeOrderEffect = (shopId, shopName, productList, address) => {
       console.log(result)
       if (result?.errno === 0) {
         store.commit('clearCartData', shopId)
-        router.push({ name: 'Home' })
+        router.push({ name: 'OrderList' })
       }
     } catch (e) {
 

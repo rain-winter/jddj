@@ -31,7 +31,7 @@ export default {
     const dockerList = [
       { icon: '&#xe6f3;', text: '首页', to: '/home' },
       { icon: '&#xe7e5;', text: '购物车', to: '/cartList' },
-      { icon: '&#xe61e;', text: '订单', to: '/order' },
+      { icon: '&#xe61e;', text: '订单', to: '/orderList' },
       { icon: '&#xe660;', text: '我的' }
     ]
     const navi = hyperEffect()
@@ -61,7 +61,7 @@ export default {
     }
   }
   &_title {
-    font-size: 20px;
+    font-size: .2rem;
     transform: scale(0.5, 0.5); // 缩放 横向纵向缩放
     transform-origin: center top;
   }

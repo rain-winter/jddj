@@ -97,11 +97,12 @@ export default {
     text-align: center;
     margin-top: 0.15rem;
     font-size: 0.12rem;
-    line-height: 0.17rem;
+    line-height: 0.2rem;
   }
   img {
     width: 0.4rem;
     height: 0.4rem;
+    margin: 0 auto;
   }
 }
 .greyLine {
