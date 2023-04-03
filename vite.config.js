@@ -1,20 +1,13 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import removeConsole from 'vite-plugin-remove-console'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), removeConsole()],
   server: {
     host: 'localhost',
-    build: {
-      minify: 'terser', // 默认为esbuild
-      terserOptions: {
-        compress: {
-          drop_console: true, // 生产环境移除console
-          drop_debugger: true, // 生产环境移除debugger
-        },
-      },
-    },
+
     // 代理
     proxy: {
       '/api': {
