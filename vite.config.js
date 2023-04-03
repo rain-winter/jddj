@@ -6,6 +6,15 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     host: 'localhost',
+    build: {
+      minify: 'terser', // 默认为esbuild
+      terserOptions: {
+        compress: {
+          drop_console: true, // 生产环境移除console
+          drop_debugger: true, // 生产环境移除debugger
+        },
+      },
+    },
     // 代理
     proxy: {
       '/api': {

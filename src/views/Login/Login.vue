@@ -2,13 +2,22 @@
   <div class="wrapper">
     <img class="wrapper_img" src="http://www.dell-lee.com/imgs/vue3/user.png" />
     <div class="wrapper_input">
-      <input class="wrapper_input_content" v-model="username" placeholder="请输入手机号" />
+      <input
+        class="wrapper_input_content"
+        v-model="username"
+        placeholder="请输入手机号"
+      />
     </div>
     <div class="wrapper_input">
-      <input class="wrapper_input_content" v-model="password" placeholder="请输入密码" />
+      <input
+        class="wrapper_input_content"
+        v-model="password"
+        type="password"
+        placeholder="请输入密码"
+      />
     </div>
     <div @click="handleLogin" class="wrapper_login_btn">登录</div>
-    <div @click="handleRegister" class="wrapper_login_link">立即注册</div>
+    <div @click="handleRegisterClick" class="wrapper_login_link">立即注册</div>
     <Toast v-if="show" :message="toastMessage" />
   </div>
 </template>
@@ -19,26 +28,20 @@ import { reactive, toRefs } from 'vue'
 import Toast, { useToastEffect } from '../../components/Toast.vue'
 import { $post } from '../../utils/request'
 
-// const axios = require('axios')
-
 // 处理注册逻辑
 const useLoginEffect = (showToast) => {
   // const router = useRouter()
-  const data = reactive({ username: '', password: '' })
+  const data = reactive({ username: 'rain', password: '123456' })
 
   const handleLogin = async () => {
-    // axios.post('/api/user/login', {
-    //   username: data.username,
-    //   password: data.password
-    // }).then((res) => {
-    //   console.log(res)
-    // })
-    localStorage.isLogin = true
+    localStorage.setItem('isLogin', true)
+    // localStorage.isLogin = true
     const user = await $post('/api/user/login', {
       username: data.username,
-      password: data.password
+      password: data.password,
     })
-    console.log(user.data)
+    const router = useRouter()
+    router.push({ name: 'Home' })
   }
 
   const { username, password } = toRefs(data)
@@ -56,10 +59,22 @@ const useRegisterEffect = () => {
 export default {
   name: 'Login',
   components: { Toast },
-  setup () {
+  setup() {
+    const router = useRouter()
+
     const { show, toastMessage, showToast } = useToastEffect()
-    const { username, password, handleLogin } = useLoginEffect(showToast)
+    const { username, password } = useLoginEffect(showToast)
     const { handleRegisterClick } = useRegisterEffect()
+
+    const handleLogin = async () => {
+      localStorage.setItem('isLogin', true)
+      // localStorage.isLogin = true
+      // const user = await $post('/api/user/login', {
+      //   username: data.username,
+      //   password: data.password,
+      // })
+      router.push({ name: 'Home' })
+    }
 
     return {
       username,
@@ -67,13 +82,13 @@ export default {
       show,
       toastMessage,
       handleLogin,
-      handleRegisterClick
+      handleRegisterClick,
     }
-  }
+  },
 }
 </script>
 <style lang="scss" scoped>
-@import "../../style/viriables.scss";
+@import '../../style/viriables.scss';
 .wrapper {
   position: fixed;
   top: 50%;
